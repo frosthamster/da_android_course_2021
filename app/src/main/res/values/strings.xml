@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DAAndroidCourse2021</string>
+    <string name="open_squared_activity_button_name">Перейти на activity с квадратом</string>
 </resources>
