@@ -45,7 +45,10 @@ class HabitRecyclerViewAdapter(private val habits: List<Habit>, private val root
             descriptionTextView.text = habit.description
             priorityTextView.text = habit.priority.toString()
             typeTextView.text = habit.type.toString()
-            frequencyTextView.text = "${habit.frequency} раз, каждые ${habit.frequencyRangeDays} дней"
+            frequencyTextView.text = "${habit.frequency} " +
+                    "${root.getString(R.string.editHabit_frequencyHint)} " +
+                    "${habit.frequencyRangeDays} " +
+                    "${root.getString(R.string.editHabit_frequencyRandeDaysHint)}"
         }
     }
 

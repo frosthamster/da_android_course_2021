@@ -71,7 +71,7 @@ class EditHabitActivity : AppCompatActivity() {
         habitId = habit.id
         nameEditText.setText(habit.name)
         descriptionEditText.setText(habit.description)
-        prioritySpinner.setSelection(0)
+        prioritySpinner.setSelection(habit.priority.toRepresentation())
         when(habit.type) {
             HabitType.GOOD -> typeGoodRadioButton.isActivated = true
             HabitType.BAD -> typeBadRadioButton.isActivated = true
@@ -85,7 +85,7 @@ class EditHabitActivity : AppCompatActivity() {
             id = habitId ?: UUID.randomUUID(),
             name = nameEditText.text.toString().takeIf { it.isNotEmpty() } ?: return null,
             description = descriptionEditText.text.toString().takeIf { it.isNotEmpty() } ?: return null,
-            priority = HabitPriority.LOW,
+            priority = HabitPriority.fromRepresentation(prioritySpinner.selectedItem.toString(), resources),
             type = if (typeGoodRadioButton.isActivated) HabitType.GOOD else HabitType.BAD,
             frequency = frequencyEditText.text.toString().takeIf { it.isNotEmpty() } ?.toInt() ?: return null,
             frequencyRangeDays = frequencyRangeDaysEditText.text.toString().takeIf { it.isNotEmpty() } ?.toInt() ?: return null,
