@@ -1,6 +1,20 @@
 <resources>
-    <string name="appName">DAAndroidCourse2021</string>
-    <string name="main_bt_openSquaredText">Перейти на activity с квадратом</string>
-    <string name="main_tv_counterText">Количество изменений конфигурации: %d</string>
-    <string name="squared_tv_counterText">Количество изменений конфигурации в квадрате: %d</string>
+    <string name="app_name">DAAndroidCourse2021</string>
+    <string name="main_btAddDescription">Добавить привычку</string>
+    <string name="main_twEmptyHabitsText">Привычек нет</string>
+    <string name="editHabit_name">Название</string>
+    <string name="editHabit_description">Описание</string>
+    <string name="editHabit_priority">Приоритет</string>
+    <string name="editHabit_type">Тип</string>
+    <string name="editHabit_typeGood">Хорошая</string>
+    <string name="editHabit_typeBad">Плохая</string>
+    <string name="editHabit_frequency">Периодичность</string>
+    <string name="editHabit_save">Сохранить</string>
+    <string name="editHabit_frequencyHint">раз, каждые</string>
+    <string name="editHabit_frequencyRandeDaysHint">дней</string>
+    <string-array name="editHabit_types">
+        <item>Низкий</item>
+        <item>Средний</item>
+        <item>Высокий</item>
+    </string-array>
 </resources>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/editHabit_name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+        <EditText
+            android:id="@+id/editHabit_ptName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/editHabit_description"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+        <EditText
+            android:id="@+id/editHabit_ptDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".6"
+                android:text="@string/editHabit_priority"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+            <Spinner
+                android:id="@+id/editHabit_spinPriority"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".4"
+                android:entries="@array/editHabit_types"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/editHabit_type"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RadioButton
+                android:id="@+id/editHabit_rbGood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/editHabit_typeGood"/>
+
+            <RadioButton
+                android:id="@+id/editHabit_rbBad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/editHabit_typeBad"/>
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/editHabit_frequency"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/editHabit_ptFrequency"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".2"
+                android:ems="10"
+                android:inputType="number"
+                android:autofillHints=""/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:text="@string/editHabit_frequencyHint"/>
+
+            <EditText
+                android:id="@+id/editHabit_ptFrequencyRangeDays"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".2"
+                android:ems="10"
+                android:inputType="number"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:text="@string/editHabit_frequencyRandeDaysHint"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/editHabit_btSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/editHabit_save"/>
+    </LinearLayout>
+</ScrollView>
