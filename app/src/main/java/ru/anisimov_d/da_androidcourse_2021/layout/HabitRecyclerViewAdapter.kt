@@ -1,16 +1,15 @@
 package ru.anisimov_d.da_androidcourse_2021.layout
 
-import android.content.Intent
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import ru.anisimov_d.da_androidcourse_2021.R
 import ru.anisimov_d.da_androidcourse_2021.domain.Habit
 
-class HabitRecyclerViewAdapter(private val habits: List<Habit>, private val root: AppCompatActivity) :
+class HabitRecyclerViewAdapter(private val habits: List<Habit>, private val root: IEditHabitHandler, private val rootContext: Context) :
     RecyclerView.Adapter<HabitRecyclerViewAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -27,12 +26,7 @@ class HabitRecyclerViewAdapter(private val habits: List<Habit>, private val root
         val habitView = LayoutInflater.from(parent.context).inflate(R.layout.habit, parent, false)
         val holder = ViewHolder(habitView)
         habitView.setOnClickListener {
-            Intent(root, EditHabitActivity::class.java)
-                .apply {
-                    putExtra(EditHabitActivity.INTENT_EXTRA_TYPE_KEY, EditHabitActivity.INTENT_TYPE_UPDATE_HABIT)
-                    putExtra(EditHabitActivity.INTENT_HABIT_DATA, holder.habit!!)
-                }
-                .let { root.startActivityForResult(it, 1) }
+            root.editHabit(holder.habit!!)
         }
         return holder
     }
@@ -45,10 +39,12 @@ class HabitRecyclerViewAdapter(private val habits: List<Habit>, private val root
             descriptionTextView.text = habit.description
             priorityTextView.text = habit.priority.toString()
             typeTextView.text = habit.type.toString()
-            frequencyTextView.text = "${habit.frequency} " +
-                    "${root.getString(R.string.editHabit_frequencyHint)} " +
+            frequencyTextView.text = (
+                    "${habit.frequency} " +
+                    "${rootContext.getString(R.string.editHabit_frequencyHint)} " +
                     "${habit.frequencyRangeDays} " +
-                    "${root.getString(R.string.editHabit_frequencyRandeDaysHint)}"
+                    rootContext.getString(R.string.editHabit_frequencyRandeDaysHint)
+            )
         }
     }
 

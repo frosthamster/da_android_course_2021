@@ -8,14 +8,15 @@ import java.lang.RuntimeException
 import java.util.*
 
 
-enum class HabitPriority {
+@Parcelize
+enum class HabitPriority : Parcelable {
     LOW,
     MEDIUM,
     HIGH;
 
     companion object {
         fun fromRepresentation(value: String, resources: Resources): HabitPriority {
-            val representation = resources.getStringArray(R.array.editHabit_types)
+            val representation = resources.getStringArray(R.array.editHabit_priority)
             return when (value) {
                 representation[0] -> LOW
                 representation[1] -> MEDIUM
@@ -26,17 +27,33 @@ enum class HabitPriority {
     }
 
     fun toRepresentation(): Int = when(this) {
-            LOW -> 0
-            MEDIUM -> 1
-            HIGH -> 2
-        }
+        LOW -> 0
+        MEDIUM -> 1
+        HIGH -> 2
+    }
 }
 
-enum class HabitType {
+@Parcelize
+enum class HabitType : Parcelable {
     GOOD,
-    BAD,
-}
+    BAD;
 
+    companion object {
+        fun fromRepresentation(value: String, resources: Resources): HabitType {
+            val representation = resources.getStringArray(R.array.editHabit_type)
+            return when (value) {
+                representation[0] -> HabitType.GOOD
+                representation[1] -> HabitType.BAD
+                else -> throw RuntimeException()
+            }
+        }
+    }
+
+    fun toRepresentation(): Int = when(this) {
+        HabitType.GOOD -> 0
+        HabitType.BAD -> 1
+    }
+}
 
 @Parcelize
 data class Habit(

@@ -1,47 +1,79 @@
 package ru.anisimov_d.da_androidcourse_2021.layout
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.TextView
+import android.view.MenuItem
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
 import ru.anisimov_d.da_androidcourse_2021.R
 import ru.anisimov_d.da_androidcourse_2021.domain.Habit
+import ru.anisimov_d.da_androidcourse_2021.domain.HabitType
 import java.util.*
 
 
-class MainActivity : AppCompatActivity() {
+interface ICreateHabitHandler {
+    fun createHabit()
+}
+
+interface IEditHabitHandler {
+    fun editHabit(habit: Habit)
+}
+
+interface ISaveHabitHandler {
+    fun saveHabit(habit: Habit, originalType: HabitType)
+}
+
+interface IHabitsListObserver {
+    fun onHabitChanged(id: UUID)
+    fun onHabitRemoved(id: UUID)
+}
+
+interface IHabitsListObservable {
+    val habits: List<Habit>
+    fun attachHabitObserver(observer: IHabitsListObserver, type: HabitType)
+}
+
+class MainActivity :
+    AppCompatActivity(),
+    ICreateHabitHandler,
+    IEditHabitHandler,
+    ISaveHabitHandler,
+    IHabitsListObservable,
+    NavigationView.OnNavigationItemSelectedListener
+{
     companion object {
-        const val BUNDLE_HABITS_KEY = "HABITS"
-        const val INTENT_EXTRA_TYPE_KEY = "TYPE"
-        const val INTENT_TYPE_ADD_HABIT = "ADD_HABIT"
-        const val INTENT_TYPE_UPDATE_HABIT = "UPDATE_HABIT"
-        const val INTENT_HABIT_DATA = "HABIT_DATA"
+        const val BUNDLE_HABITS_KEY = "habits"
     }
 
-    private lateinit var emptyHabitsTextView: TextView
-    private lateinit var habitsRecyclerView: RecyclerView
-
-    private val habits: MutableList<Habit> = mutableListOf()
-    private val habitsMap: MutableMap<UUID, Pair<Int, Habit>> = mutableMapOf()
+    private lateinit var drawerToggle: ActionBarDrawerToggle
+    private lateinit var drawerLayout: DrawerLayout
+    private val typedObservers: MutableMap<HabitType, IHabitsListObserver> = mutableMapOf()
+    override val habits: MutableList<Habit> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        emptyHabitsTextView = findViewById(R.id.main_twEmptyHabits)
-        habitsRecyclerView = findViewById<RecyclerView>(R.id.main_rwHabits).apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = HabitRecyclerViewAdapter(habits, this@MainActivity)
-        }
-        findViewById<FloatingActionButton>(R.id.main_fabAdd).setOnClickListener {
-            Intent(this, EditHabitActivity::class.java).let {
-                startActivityForResult(it, 1)
-            }
-        }
+        val toolbar = findViewById<Toolbar>(R.id.main_toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        drawerLayout = findViewById(R.id.main_drawerLayout)
+        drawerToggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.drawer_open,
+            R.string.drawer_close
+        )
+        drawerLayout.addDrawerListener(drawerToggle)
+        drawerToggle.syncState()
+        findViewById<NavigationView>(R.id.main_drawer).setNavigationItemSelectedListener(this)
+
+        setHabitsFragment()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -52,35 +84,69 @@ class MainActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         habits.clear()
-        habitsMap.clear()
-        emptyHabitsTextView.visibility = View.VISIBLE
-        savedInstanceState.getParcelableArray(BUNDLE_HABITS_KEY)?.map { addHabit(it as Habit) }
+        savedInstanceState.getParcelableArray(BUNDLE_HABITS_KEY)?.map { habits.add(it as Habit) }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == 1) {
-            if (resultCode == 1) {
-                when(data?.getStringExtra(INTENT_EXTRA_TYPE_KEY)) {
-                    INTENT_TYPE_ADD_HABIT -> data.getParcelableExtra<Habit>(INTENT_HABIT_DATA)?.let { addHabit(it) }
-                    INTENT_TYPE_UPDATE_HABIT -> data.getParcelableExtra<Habit>(INTENT_HABIT_DATA)?.let { updateHabit(it) }
-                }
-            }
-            super.onActivityResult(requestCode, resultCode, data)
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_item_home -> setHabitsFragment()
+            R.id.menu_item_about -> setInfoFragment()
         }
+
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
     }
 
-    private fun addHabit(habit: Habit) {
-        habits.add(habit)
-        val position = habits.size - 1
-        habitsMap[habit.id] = Pair(position, habit)
-        emptyHabitsTextView.visibility = View.GONE
-        habitsRecyclerView.adapter?.notifyItemInserted(position)
+    private fun setDrawerEnabled(enabled: Boolean) {
+        val lockMode = if (enabled) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+        drawerLayout.setDrawerLockMode(lockMode)
+        drawerToggle.isDrawerIndicatorEnabled = enabled
     }
 
-    private fun updateHabit(habit: Habit) {
-        habitsMap[habit.id]?.let {
-            habits[it.first] = habit
-            habitsRecyclerView.adapter?.notifyItemChanged(it.first)
+    private fun setHabitsFragment() {
+        setDrawerEnabled(true)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_fragmentContainer, HabitsViewFragment())
+            .commit()
+    }
+
+    private fun setInfoFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_fragmentContainer, InfoFragment())
+            .commit()
+    }
+
+    override fun attachHabitObserver(observer: IHabitsListObserver, type: HabitType) {
+        typedObservers[type] = observer
+    }
+
+    override fun editHabit(habit: Habit) {
+        setDrawerEnabled(false)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_fragmentContainer, EditHabitFragment.newInstance(habit))
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun createHabit() {
+        setDrawerEnabled(false)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_fragmentContainer, EditHabitFragment.newInstance(null))
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun saveHabit(habit: Habit, originalType: HabitType) {
+        setDrawerEnabled(true)
+        val existingHabit = habits.withIndex().find { it.value.id == habit.id }
+        if (existingHabit != null) {
+            habits[existingHabit.index] = habit
+        } else {
+            habits.add(habit)
         }
+        if (originalType != habit.type)
+            typedObservers[originalType]!!.onHabitRemoved(habit.id)
+        typedObservers[habit.type]?.onHabitChanged(habit.id)
+        supportFragmentManager.popBackStack()
     }
 }

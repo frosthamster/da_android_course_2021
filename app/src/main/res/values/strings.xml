@@ -12,9 +12,18 @@
     <string name="editHabit_save">Сохранить</string>
     <string name="editHabit_frequencyHint">раз, каждые</string>
     <string name="editHabit_frequencyRandeDaysHint">дней</string>
-    <string-array name="editHabit_types">
+    <string name="menuMain_habits">Привычки</string>
+    <string name="menuMain_info">О приложении</string>
+    <string name="fragmentInfo_text">Информация</string>
+    <string name="drawer_open">Открыть</string>
+    <string name="drawer_close">Закрыть</string>
+    <string-array name="editHabit_priority">
         <item>Низкий</item>
         <item>Средний</item>
         <item>Высокий</item>
+    </string-array>
+    <string-array name="editHabit_type">
+        <item>Хорошая</item>
+        <item>Плохая</item>
     </string-array>
 </resources>
